@@ -7,7 +7,7 @@ class SimpleClassComponents extends Component {
     render() {
         return (
             <div>
-                <h1>Vite + React </h1>
+                <h1>Webshop </h1>
                 </div>
         );
     }
