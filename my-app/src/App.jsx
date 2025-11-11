@@ -1,20 +1,20 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './styles/App.css'
-import SimpleFunctionalComponent from './components/SimpleFunctionalComponent.jsx'
-import SimpleClassComponents from './components/SimpleClassComponents.jsx'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import Home from './pages/Home.jsx'
 import SignIn from './pages/SignIn.jsx'
 import Cart from './pages/Cart.jsx'
+import SearchBar from './components/SearchBar.jsx'
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState('')
   return (
     <> 
-      
       <Navbar />
+      <div className="search-section">
+        <SearchBar onSearch={setSearchQuery} />
+      </div>
       <main className="app-content">
       <Routes>
            <Route path="/" element={<Home />} />
