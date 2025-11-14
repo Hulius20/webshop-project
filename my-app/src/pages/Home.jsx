@@ -1,8 +1,10 @@
 import ProductCard from '../components/ProductCard.jsx'
-import React from 'react';
+import React, {useState} from 'react';
+import SearchBar from '../components/SearchBar.jsx';
 
 
 export default function Home() {
+    const [searchQuery, setSearchQuery] = useState('')
     const sampleProducts = [
         {id:1, title: 'Product 1', description: 'This is product 1', price: 19.99, image: 'https://via.placeholder.com/150'},
         {id:2, title: 'Product 2', description: 'This is product 2', price: 29.99, image: 'https://via.placeholder.com/150'},
@@ -20,6 +22,10 @@ export default function Home() {
 
     ]
   return (
+    <>
+    <div className="search-section">
+        <SearchBar onSearch={setSearchQuery} />
+      </div>
     <div>
         <section className="product-grid">
             {sampleProducts.map(product => (
@@ -34,5 +40,6 @@ export default function Home() {
             ))} 
         </section>
     </div>
+    </>
     )
 }
