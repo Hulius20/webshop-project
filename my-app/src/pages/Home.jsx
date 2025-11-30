@@ -1,10 +1,53 @@
 import ProductCard from '../components/ProductCard.jsx'
-import React, {useState} from 'react';
+import React, {useState, useEffect, use} from 'react';
 import SearchBar from '../components/SearchBar.jsx';
+import api from '../api/axiosWithAuth.jsx';
 
 
 export default function Home() {
     const [searchQuery, setSearchQuery] = useState('')
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        // Fetch products from API
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        // Refetch products when a user logs in
+        const handleLogInEvent = () =>{
+            fetchProducts();
+        };
+        window.addEventListener('logInEvent', handleLogInEvent);
+        return () => {
+            window.removeEventListener('logInEvent', handleLogInEvent);
+        };
+        
+    }, []);
+
+    useEffect(() => {
+        // Refetch products when a product is added
+        const handleProductAdded = () =>{
+            fetchProducts();
+        };
+        window.addEventListener('productAdded', handleProductAdded);
+        return () => {
+            window.removeEventListener('productAdded', handleProductAdded);
+        };
+    }, []);
+    const fetchProducts = async () => {
+        try {
+            const response = await api.get('/api/products/');
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    const handleAddToCart = (productId) => {
+        console.log(`Product ${productId} added to cart.`);
+        //implement add to cart functionality here
+    };
     const sampleProducts = [
         {id:1, title: 'Product 1', description: 'This is product 1', price: 19.99, image: 'https://via.placeholder.com/150'},
         {id:2, title: 'Product 2', description: 'This is product 2', price: 29.99, image: 'https://via.placeholder.com/150'},
@@ -35,7 +78,17 @@ export default function Home() {
                     description={product.description}
                     price={product.price}
                     image={product.image}
-                    onAdd={() => alert(`Added ${product.title} to cart!`)}
+                    onAdd={() => handleAddToCart(product.id)}
+                />
+            ))} 
+            {products.map(product => (
+                <ProductCard
+                    key={product.id}
+                    title={product.title}
+                    description={product.description}
+                    price={product.price}
+                    image={product.image}
+                    onAdd={() => handleAddToCart(product.id)}
                 />
             ))} 
         </section>

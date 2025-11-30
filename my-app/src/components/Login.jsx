@@ -1,19 +1,30 @@
-import { useState } from "react";
-import axios from "axios";
+import {useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api, {setToken} from "../api/axiosWithAuth";
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await axios.post("http://127.0.0.1:8000/api/accounts/login/", {
+        try{
+            const response = await api.post("api/accounts/login/", {
             username,
             password,
-        });
+            });
+            const token = response.data?.access;
+            if (token) {
+                setToken(token);
+                localStorage.setItem("username", username);
+                window.dispatchEvent(new Event('userLoggedIn'));
+                navigate("/");
+            }
+        } catch (error){
+            alert("Login failed. Please check your credentials and try again.");
 
-        localStorage.setItem("access_token", response.data.access);
-
+    }
     };
     return (
         <form onSubmit={handleSubmit}>

@@ -6,6 +6,7 @@ import Home from './pages/Home.jsx'
 import SignIn from './pages/SignIn.jsx'
 import Cart from './pages/Cart.jsx'
 import Footer from './components/Footer.jsx'
+import Account from './pages/Account.jsx'
 
 function App() {
   
@@ -17,6 +18,7 @@ function App() {
            <Route path="/" element={<Home />} />
            <Route path="/sign-in" element={<SignIn />} />
            <Route path="/cart" element={<Cart />} /> 
+           <Route path="/account" element={<Account />} />
       </Routes>
       <Footer />
       </main>
