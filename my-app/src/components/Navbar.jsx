@@ -2,11 +2,14 @@ import React, {useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/logout.jsx';
 import '../styles/Navbar.css';
+import { setToken } from '../api/axiosWithAuth.jsx';
+import useCart from '../hooks/useCart.jsx';
 
 function Navbar() {
     const [username, setUsername] = useState(() => localStorage.getItem('username'));
     const navigate = useNavigate();
-    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 1 minute
+    const { totalCount } = useCart();
+    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
     let inactivityTimer;
 
     useEffect(() => {
@@ -81,7 +84,10 @@ function Navbar() {
         } catch (error) {
             console.error('Logout failed:', error);
         }
+        setToken(null);
+        localStorage.removeItem('username');
         setUsername(null);
+        window.dispatchEvent(new Event('userLoggedOut'));
         navigate('/');
     };
     return (
@@ -94,7 +100,10 @@ function Navbar() {
                     <>
                         <span className="nav-username">Welcome, {username}!</span>
                         <Link to="/account">Account</Link>
-                        <Link to="/cart">Cart</Link>
+                        <Link to="/cart">
+                            Cart
+                            {totalCount > 0 && <span className="cart-badge">{totalCount}</span>}
+                        </Link>
                         <button onClick={handleLogout}>Logout</button>
                     </>
                 ) : (

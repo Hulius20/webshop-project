@@ -1,7 +1,16 @@
 import React from "react";
 import '../styles/ProductCard.css';
+import useCart from "../hooks/useCart.jsx";
 
-export default function ProductCard({title,price ,image , description, onAdd}){
+export default function ProductCard({id,title,price ,image , description, onAdd}){
+
+    const {addToCart} = useCart();
+    
+    const handleAddToCart = () => {
+        addToCart({id,title, price, image},1);
+        if(onAdd) onAdd();
+    };
+    
     return(
         <article className="product-card">
             <div className="product-media">
@@ -12,7 +21,7 @@ export default function ProductCard({title,price ,image , description, onAdd}){
                 <p className="product-description">{description}</p>
                 <div className="product-footer">
                     <span className="product-price">€{price}</span>
-                    <button className="product-btn" onClick={onAdd}>Add to Cart</button>
+                    <button className="product-btn" onClick={handleAddToCart}>Add to Cart</button>
                 </div>
             </div>
         </article>

@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import AddProduct from "../account-components/AddProduct.jsx";
+import UsersProducts from "../account-components/UsersProducts.jsx";
 
 export default function Account() {
     const [productAdded, setProductAdded] = useState(false);
@@ -16,7 +17,7 @@ export default function Account() {
             </div>
             <div>
                 <h2>Your Products</h2>
-                {/* Here you can add a component to list the user's products */}
+                <UsersProducts key={productAdded} />
                 
             </div>
         </>

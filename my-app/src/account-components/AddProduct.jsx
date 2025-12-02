@@ -10,12 +10,13 @@ export default function AddProduct({ onProductAdded }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post("/api/products/", {
+            const payload = {
                 title,
                 price,
                 description,
-                image,
-            });
+            };
+            if (image && image.trim() !== "") payload.image = image.trim();
+            const response = await api.post("/api/products/", payload);
             alert("Product added successfully!");
             setTitle("");
             setPrice("");
@@ -52,10 +53,9 @@ export default function AddProduct({ onProductAdded }) {
             />
             <input
                 type="text"
-                placeholder="Image URL"
+                placeholder="Image URL (optional)"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
-                required
             />
             <button type="submit">Add Product</button>
         </form>

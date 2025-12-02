@@ -1,17 +1,42 @@
 import ProductCard from '../components/ProductCard.jsx'
-import React, {useState, useEffect, use} from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../components/SearchBar.jsx';
-import api from '../api/axiosWithAuth.jsx';
+import publicApi from '../api/axiosPublic.jsx';
+import apiAuth from '../api/axiosWithAuth.jsx'; // authenticated client
 
 
 export default function Home() {
     const [searchQuery, setSearchQuery] = useState('')
     const [products, setProducts] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
 
     useEffect(() => {
         // Fetch products from API
         fetchProducts();
+        fetchCurrentUser();
     }, []);
+
+    // refresh current user when auth state changes
+    useEffect(() => {
+        const onLogin = () => fetchCurrentUser();
+        const onLogout = () => setCurrentUserId(null);
+        window.addEventListener('userLoggedIn', onLogin);
+        window.addEventListener('userLoggedOut', onLogout);
+        return () => {
+            window.removeEventListener('userLoggedIn', onLogin);
+            window.removeEventListener('userLoggedOut', onLogout);
+        };
+    }, []);
+
+    async function fetchCurrentUser() {
+        try {
+            const res = await apiAuth.get('/api/accounts/me/');
+            setCurrentUserId(res.data?.id ?? null);
+        } catch (err) {
+            // not logged in / invalid token -> treat as anonymous
+            setCurrentUserId(null);
+        }
+    }
 
     useEffect(() => {
         // Refetch products when a user logs in
@@ -37,8 +62,8 @@ export default function Home() {
     }, []);
     const fetchProducts = async () => {
         try {
-            const response = await api.get('/api/products/');
-            setProducts(response.data);
+            const response = await publicApi.get('/api/products/');
+            setProducts(response.data || []);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -48,51 +73,36 @@ export default function Home() {
         console.log(`Product ${productId} added to cart.`);
         //implement add to cart functionality here
     };
-    const sampleProducts = [
-        {id:1, title: 'Product 1', description: 'This is product 1', price: 19.99, image: 'https://via.placeholder.com/150'},
-        {id:2, title: 'Product 2', description: 'This is product 2', price: 29.99, image: 'https://via.placeholder.com/150'},
-        {id:3, title: 'Product 3', description: 'This is product 3', price: 39.99, image: 'https://via.placeholder.com/150'},
-        {id:4, title: 'Product 4', description: 'This is product 4', price: 49.99, image: 'https://via.placeholder.com/150'},
-        {id:5, title: 'Product 5', description: 'This is product 5', price: 59.99, image: 'https://via.placeholder.com/150'},
-        {id:6, title: 'Product 6', description: 'This is product 6', price: 69.99, image: 'https://via.placeholder.com/150'},
-        {id:7, title: 'Product 7', description: 'This is product 7', price: 79.99, image: 'https://via.placeholder.com/150'},
-        {id:8, title: 'Product 8', description: 'This is product 8', price: 89.99, image: 'https://via.placeholder.com/150'},
-        {id:9, title: 'Product 9', description: 'This is product 9', price: 99.99, image: 'https://via.placeholder.com/150'},
-        {id:10, title: 'Product 10', description: 'This is product 10', price: 109.99, image: 'https://via.placeholder.com/150'},
-        {id:11, title: 'Product 11', description: 'This is product 11', price: 119.99, image: 'https://via.placeholder.com/150'},
-        {id:12, title: 'Product 12', description: 'This is product 12', price: 129.99, image: 'https://via.placeholder.com/150'},
-        {id:13, title: 'Product 13', description: 'This is product 13', price: 139.99, image: 'https://via.placeholder.com/150'},
 
-    ]
-  return (
-    <>
-    <div className="search-section">
-        <SearchBar onSearch={setSearchQuery} />
-      </div>
-    <div>
-        <section className="product-grid">
-            {sampleProducts.map(product => (
-                <ProductCard
-                    key={product.id}
-                    title={product.title}
-                    description={product.description}
-                    price={product.price}
-                    image={product.image}
-                    onAdd={() => handleAddToCart(product.id)}
-                />
-            ))} 
-            {products.map(product => (
-                <ProductCard
-                    key={product.id}
-                    title={product.title}
-                    description={product.description}
-                    price={product.price}
-                    image={product.image}
-                    onAdd={() => handleAddToCart(product.id)}
-                />
-            ))} 
-        </section>
-    </div>
-    </>
+    // Only show products that are for sale (treat missing flag as true)
+    const visibleProducts = products
+        .filter(p => (p.for_sale === undefined) ? true : Boolean(p.for_sale))
+        .filter(p => {
+            // hide products that belong to current logged-in user
+            if (!currentUserId) return true; // anonymous viewers see everything for sale
+            return String(p.seller) !== String(currentUserId);
+        });
+
+    return (
+        <>
+            <div className="search-section">
+                <SearchBar onSearch={setSearchQuery} />
+            </div>
+            <div>
+                <section className="product-grid">
+                    {visibleProducts.map(product => (
+                        <ProductCard
+                            key={product.id}
+                            id={product.id}
+                            title={product.title}
+                            description={product.description}
+                            price={product.price}
+                            image={product.image}
+                            onAdd={() => handleAddToCart(product.id)}
+                        />
+                    ))} 
+                </section>
+            </div>
+        </>
     )
 }

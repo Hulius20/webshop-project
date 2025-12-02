@@ -41,6 +41,29 @@ nav h2 {
 nav a{
     color: white;
 }
+
+.nav-links a{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 4px;
+    position: relative;
+    top: -2px;
+}
+
 .app-content {
   padding-top: 60px;
 }
