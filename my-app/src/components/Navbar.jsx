@@ -9,7 +9,7 @@ function Navbar() {
     const [username, setUsername] = useState(() => localStorage.getItem('username'));
     const navigate = useNavigate();
     const { totalCount } = useCart();
-    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 15 minutes
     let inactivityTimer;
 
     useEffect(() => {
@@ -109,7 +109,7 @@ function Navbar() {
                 ) : (
                     <>
                         <span className="nav-username">Guest</span>
-                        <Link to="/sign-in">Sign In</Link>
+                        <Link to="/signup">Sign In</Link>
                         <Link to="/cart">Cart</Link>
                     </>
                 )}

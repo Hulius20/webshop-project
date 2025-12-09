@@ -16,8 +16,10 @@ function App() {
       <main className="app-content">
       <Routes>
            <Route path="/" element={<Home />} />
-           <Route path="/sign-in" element={<SignIn />} />
+           <Route path="/signup" element={<SignIn />} />
+           <Route path="/login" element={<SignIn />} />
            <Route path="/cart" element={<Cart />} /> 
+           <Route path="/myItems" element={<Account />} />
            <Route path="/account" element={<Account />} />
       </Routes>
       <Footer />

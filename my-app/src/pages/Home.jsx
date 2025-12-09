@@ -83,6 +83,11 @@ export default function Home() {
             return String(p.seller) !== String(currentUserId);
         });
 
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const filteredProducts = normalizedQuery
+        ? visibleProducts.filter(p => p.title.toLowerCase().includes(normalizedQuery) || (p.description && p.description.toLowerCase().includes(normalizedQuery)))
+        : visibleProducts;    
+
     return (
         <>
             <div className="search-section">
@@ -90,12 +95,13 @@ export default function Home() {
             </div>
             <div>
                 <section className="product-grid">
-                    {visibleProducts.map(product => (
+                    {filteredProducts.map(product => (
                         <ProductCard
                             key={product.id}
                             id={product.id}
                             title={product.title}
                             description={product.description}
+                            created_at={product.created_at}
                             price={product.price}
                             image={product.image}
                             onAdd={() => handleAddToCart(product.id)}
