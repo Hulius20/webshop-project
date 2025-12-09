@@ -2,10 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from .serializer import RegisterSerializer
 
 
@@ -28,3 +27,27 @@ class RegisterView(APIView):
         
         user = User.objects.create_user(username=username, email=email, password=password)
         return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True)
+
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        old = serializer.validated_data['old_password']
+        new = serializer.validated_data['new_password']
+
+        if not user.check_password(old):
+            return Response({'old_password': ['Incorrect password.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new)
+        user.save()
+        return Response({'detail': 'Password updated.'}, status=status.HTTP_200_OK)
