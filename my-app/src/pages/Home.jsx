@@ -122,6 +122,7 @@ export default function Home() {
                             price={product.price}
                             image={product.image}
                             onAdd={() => handleAddToCart(product.id)}
+                            isLoggedIn={!!currentUserId}
                         />
                     ))} 
                 </section>

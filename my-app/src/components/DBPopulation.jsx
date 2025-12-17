@@ -25,13 +25,10 @@ export default function DBPopulation() {
     <div style={{ 
       padding: '1rem', 
       marginBottom: '1rem', 
-      backgroundColor: '#f5f5f5', 
+     
       borderRadius: '4px',
       textAlign: 'center'
     }}>
-      <p style={{ marginBottom: '0.5rem', color: '#666' }}>
-        For grading purposes, populate the database with test data:
-      </p>
       <button 
         onClick={populateDatabase}
         disabled={populatingDb}
