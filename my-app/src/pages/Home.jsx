@@ -1,4 +1,5 @@
 import ProductCard from '../components/ProductCard.jsx'
+import DBPopulation from '../components/DBPopulation.jsx';
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../components/SearchBar.jsx';
 import publicApi from '../api/axiosPublic.jsx';
@@ -60,6 +61,18 @@ export default function Home() {
             window.removeEventListener('productAdded', handleProductAdded);
         };
     }, []);
+
+    // Refetch products when database is populated
+    useEffect(() => {
+        const handleDbPopulated = () => {
+            fetchProducts();
+        };
+        window.addEventListener('databasePopulated', handleDbPopulated);
+        return () => {
+            window.removeEventListener('databasePopulated', handleDbPopulated);
+        };
+    }, []);
+
     const fetchProducts = async () => {
         try {
             const response = await publicApi.get('/api/products/');
@@ -93,6 +106,10 @@ export default function Home() {
             <div className="search-section">
                 <SearchBar onSearch={setSearchQuery} />
             </div>
+
+            {/* DB Population Component */}
+            <DBPopulation />
+
             <div>
                 <section className="product-grid">
                     {filteredProducts.map(product => (
