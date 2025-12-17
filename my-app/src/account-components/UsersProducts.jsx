@@ -54,7 +54,7 @@ export default function UsersProducts() {
         }
         
         return products.filter(product => {
-            if (filter === 'all') return true;
+            if (filter === 'all') return !product.is_purchased;
             if (filter === 'for-sale') return product.for_sale && !product.is_purchased;
             if (filter === 'sold') return product.is_purchased;
             return true;
