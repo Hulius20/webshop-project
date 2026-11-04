@@ -12,7 +12,7 @@ export default function SearchBar({ onSearch }) {
 
   const handleClear = () => {
     setQuery('')
-    runSearch('')
+    onSearch('')
   }
 
   return (
