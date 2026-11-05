@@ -98,4 +98,4 @@ This is a course project meant to run locally. It uses Django development settin
 
 ## Author
 
-Julius Nyström – [github.com/Judas20](https://github.com/Judas20)
+Julius Nyström – [github.com/Hulius20](https://github.com/Hulius20)
